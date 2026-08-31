@@ -12,12 +12,12 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
 START_TEXT = """
-🎁ПОЛУЧИ КЕШБЕК 1.000Р ЗА МИНИМАЛЬНЫЙ
+🎁ПОЛУЧИ КЕШБЕК 1.000Р (ВЕЙДЖЕР X1) ЗА МИНИМАЛЬНЫЙ
 ДЕПОЗИТ ОТ 900Р🎁
 
 ❗️За бонусом писать в ЛС - @diric1❗️
 
-🎰 1WIN - https://lknt.pro/11fa34 (https://9reenhouse-7apeks.com/adiuwqrxv4)
+🎰 1WIN - https://lknt.pro/11fa34
 
 Если не открывается ссылка, то отключи VPN
 
@@ -32,6 +32,9 @@ START_TEXT = """
 
 + Индивидуальные бонусы
 ⚡️ Мгновенные выплаты без верификации
+
+Присоединяйся к нам в канал https://t.me/denkrytoi777
+Наш чат для общения https://t.me/+nkbUdyskoRRiNjAy
 """
 
 def get_keyboard():
