@@ -41,7 +41,7 @@ init_db()
 
 # ТЕКСТ
 START_TEXT = """
-🎁ПОЛУЧИ КЕШБЕК 1.000Р ЗА МИНИМАЛЬНЫЙ
+🎁ПОЛУЧИ КЕШБЕК 1.000Р (ВЕЙДЖЕР X1) ЗА МИНИМАЛЬНЫЙ
 ДЕПОЗИТ ОТ 900Р🎁
 
 ❗️За бонусом писать в ЛС - @diric1❗️
@@ -52,22 +52,28 @@ START_TEXT = """
 
 🎁 ПОДАРКИ ЗА РЕГИСТРАЦИЮ:
 
-+50 фри-спинов просто за минимальный деп (Ввести промо DENKRYTOI при регистрации)
++50 фри-спинов просто за минимальный деп (Ввести промо DENKRYTOI при регистрации).
 +500% на первые пополнения
 
-❗️ Промокод: DENKRYTOI (ОБЯЗАТЕЛЬНО УКАЗЫВАТЬ ПРИ РЕГИСТРАЦИИ)
+❗️ Промокод: DENKRYTOI (ОБЯЗАТЕЛЬНО УКАЗЫВАТЬ ПРИ РЕГИСТРАЦИИ. БЕЗ ПРОМО БОНУС НЕ ДАДУТ!
 
 Дополнительно для игрока:
+
 + Индивидуальные бонусы
 ⚡️ Мгновенные выплаты без верификации
+
+Присоединяйся к нам в канал https://t.me/denkrytoi777
+Наш чат для общения https://t.me/+nkbUdyskoRRiNjAy
 """
 
-# ССЫЛКА НА ФОТО — ЗАМЕНИ НА СВОЮ
-PHOTO_URL = "https://telegra.ph/file/your-photo.jpg"
+# ССЫЛКА НА ФОТО
+PHOTO_URL = "https://cdn.phototourl.com/free/2026-08-31-458982aa-ab5a-447f-905b-695a880b118c.jpg"
 
 def get_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🎰 ПЕРЕЙТИ В 1WIN", url="https://lknt.pro/11fa34")]
+        [InlineKeyboardButton(text="🎰 ПЕРЕЙТИ В 1WIN", url="https://lknt.pro/11fa34")],
+        [InlineKeyboardButton(text="📢 НАШ КАНАЛ", url="https://t.me/denkrytoi777")],
+        [InlineKeyboardButton(text="💬 НАШ ЧАТ", url="https://t.me/+nkbUdyskoRRiNjAy")]
     ])
     return keyboard
 
@@ -84,7 +90,7 @@ async def start_command(message: types.Message):
 
 @dp.message(Command("broadcast"))
 async def broadcast_command(message: types.Message):
-    ADMIN_ID = 6404068423  # ЗАМЕНИ НА СВОЙ ID
+    ADMIN_ID = 6404068423  # ТВОЙ ID
     
     if message.from_user.id != ADMIN_ID:
         await message.answer("⛔ Нет прав!")
