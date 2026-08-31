@@ -41,7 +41,7 @@ init_db()
 
 # ТЕКСТ
 START_TEXT = """
-🎁ПОЛУЧИ КЕШБЭК 1.000Р (С ВЕЙДЖЕРОМ X1) ЗА МИНИМАЛЬНЫЙ
+🎁ПОЛУЧИ КЕШБЕК 1.000Р ЗА МИНИМАЛЬНЫЙ
 ДЕПОЗИТ ОТ 900Р🎁
 
 ❗️За бонусом писать в ЛС - @diric1❗️
@@ -62,18 +62,25 @@ START_TEXT = """
 ⚡️ Мгновенные выплаты без верификации
 """
 
+# ССЫЛКА НА ФОТО — ЗАМЕНИ НА СВОЮ
+PHOTO_URL = "https://telegra.ph/file/your-photo.jpg"
+
 def get_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🎰 ПЕРЕЙТИ В 1WIN", url="https://lknt.pro/11fa34")]
     ])
     return keyboard
 
-# КОМАНДЫ
 @dp.message(Command("start"))
 async def start_command(message: types.Message):
     user = message.from_user
     save_user(user.id, user.username, user.first_name)
-    await message.answer(START_TEXT, reply_markup=get_keyboard())
+
+    await message.answer_photo(
+        photo=PHOTO_URL,
+        caption=START_TEXT,
+        reply_markup=get_keyboard()
+    )
 
 @dp.message(Command("broadcast"))
 async def broadcast_command(message: types.Message):
@@ -106,7 +113,6 @@ async def broadcast_command(message: types.Message):
     
     await message.answer(f"✅ Отправлено: {ok}\n❌ Ошибок: {fail}")
 
-# ЗАПУСК
 async def main():
     print("✅ БОТ ЗАПУЩЕН!")
     await dp.start_polling(bot)
