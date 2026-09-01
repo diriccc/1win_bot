@@ -136,11 +136,13 @@ async def callback_handler(callback_query: types.CallbackQuery):
     user = callback_query.from_user
     save_user(user.id, user.username, user.first_name)
     
-    # Удаляем старое сообщение с клавиатурой
-    await callback_query.message.delete()
+    # Удаляем старое сообщение
+    try:
+        await callback_query.message.delete()
+    except:
+        pass
     
     if callback_query.data == "main_menu":
-        # Отправляем главное меню с фото
         await callback_query.message.answer_photo(
             photo="https://cdn.phototourl.com/free/2026-09-01-19e3997a-b63b-4c34-96aa-7f4b27a418ef.jpg",
             caption=START_TEXT,
