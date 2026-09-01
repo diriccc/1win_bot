@@ -117,13 +117,12 @@ def back_button():
     ])
     return keyboard
 
-# ===== ОБРАБОТЧИКИ =====
+# ===== КОМАНДА /start с фото =====
 @dp.message(Command("start"))
 async def start_command(message: types.Message):
     user = message.from_user
     save_user(user.id, user.username, user.first_name)
     
-    # ОТПРАВКА ФОТО С НОВОЙ ССЫЛКОЙ
     await message.answer_photo(
         photo="https://cdn.phototourl.com/free/2026-09-01-19e3997a-b63b-4c34-96aa-7f4b27a418ef.jpg",
         caption=START_TEXT,
@@ -131,34 +130,57 @@ async def start_command(message: types.Message):
         parse_mode="Markdown"
     )
 
+# ===== ОБРАБОТЧИК КНОПОК =====
 @dp.callback_query()
 async def callback_handler(callback_query: types.CallbackQuery):
     user = callback_query.from_user
     save_user(user.id, user.username, user.first_name)
     
     if callback_query.data == "main_menu":
-        await callback_query.message.edit_text(START_TEXT, reply_markup=get_main_menu(), parse_mode="Markdown")
+        # Редактируем caption (текст под фото)
+        await callback_query.message.edit_caption(
+            caption=START_TEXT,
+            reply_markup=get_main_menu(),
+            parse_mode="Markdown"
+        )
     
     elif callback_query.data == "info":
-        await callback_query.message.edit_text(INFO_TEXT, reply_markup=back_button(), parse_mode="Markdown")
+        # Меняем фото на текст (используем edit_text)
+        await callback_query.message.edit_text(
+            INFO_TEXT,
+            reply_markup=back_button(),
+            parse_mode="Markdown"
+        )
     
     elif callback_query.data == "howto":
-        await callback_query.message.edit_text(HOW_TO_TEXT, reply_markup=back_button(), parse_mode="Markdown")
+        await callback_query.message.edit_text(
+            HOW_TO_TEXT,
+            reply_markup=back_button(),
+            parse_mode="Markdown"
+        )
     
     elif callback_query.data == "faq":
-        await callback_query.message.edit_text(FAQ_TEXT, reply_markup=back_button(), parse_mode="Markdown")
+        await callback_query.message.edit_text(
+            FAQ_TEXT,
+            reply_markup=back_button(),
+            parse_mode="Markdown"
+        )
     
     elif callback_query.data == "ip":
         try:
             response = requests.get('https://api.ipify.org?format=json', timeout=5)
             ip = response.json()['ip']
+            
+            # Создаём клавиатуру с кнопкой "ЗАПУСТИТЬ VPN" и "НАЗАД"
+            ip_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🚀 ЗАПУСТИТЬ VPN", url="https://t.me/Enot_vpn_net_bot?start=6404068423")],
+                [InlineKeyboardButton(text="🔙 НАЗАД", callback_data="main_menu")]
+            ])
+            
             await callback_query.message.edit_text(
                 f"🌐 **Твой IP-адрес:**\n\n`{ip}`\n\n"
                 "🔒 **VPN не активен!** Нажми кнопку ниже, чтобы защитить себя.",
-                reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                    [InlineKeyboardButton(text="🚀 ЗАПУСТИТЬ VPN", url="https://t.me/Enot_vpn_net_bot?start=6404068423")],
-                    [InlineKeyboardButton(text="🔙 НАЗАД", callback_data="main_menu")]
-                ]),
+                reply_markup=ip_keyboard,
                 parse_mode="Markdown"
             )
         except:
@@ -169,6 +191,7 @@ async def callback_handler(callback_query: types.CallbackQuery):
     
     await callback_query.answer()
 
+# ===== РАССЫЛКА =====
 @dp.message(Command("broadcast"))
 async def broadcast_command(message: types.Message):
     ADMIN_ID = 6404068423
