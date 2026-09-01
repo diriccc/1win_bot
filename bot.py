@@ -100,6 +100,7 @@ FAQ_TEXT = """
 Напиши в поддержку @enotnetwork — помогут за 2 минуты.
 """
 
+# ===== КЛАВИАТУРЫ =====
 def get_main_menu():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🚀 ЗАПУСТИТЬ VPN", url="https://t.me/Enot_vpn_net_bot?start=6404068423")],
@@ -116,12 +117,19 @@ def back_button():
     ])
     return keyboard
 
-# ===== КОМАНДЫ =====
+# ===== ОБРАБОТЧИКИ =====
 @dp.message(Command("start"))
 async def start_command(message: types.Message):
     user = message.from_user
     save_user(user.id, user.username, user.first_name)
-    await message.answer(START_TEXT, reply_markup=get_main_menu(), parse_mode="Markdown")
+    
+    # ОТПРАВКА ФОТО С НОВОЙ ССЫЛКОЙ
+    await message.answer_photo(
+        photo="https://cdn.phototourl.com/free/2026-09-01-19e3997a-b63b-4c34-96aa-7f4b27a418ef.jpg",
+        caption=START_TEXT,
+        reply_markup=get_main_menu(),
+        parse_mode="Markdown"
+    )
 
 @dp.callback_query()
 async def callback_handler(callback_query: types.CallbackQuery):
