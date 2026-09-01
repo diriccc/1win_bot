@@ -1,5 +1,6 @@
 import logging
 import sqlite3
+import requests
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters import Command
@@ -39,58 +40,130 @@ def get_all_users():
 
 init_db()
 
-# ТЕКСТ
+# ===== ТЕКСТЫ =====
 START_TEXT = """
-🎁ПОЛУЧИ КЕШБЕК 1.000Р (ВЕЙДЖЕР X1) ЗА МИНИМАЛЬНЫЙ
-ДЕПОЗИТ ОТ 900Р🎁
+🌟 **БЕСПЛАТНЫЙ ВПН ДЛЯ ЛЮБЫХ УСТРОЙСТВ** 🌟
 
-❗️За бонусом писать в ЛС - @diric1❗️
+📱 **Поддержка:** Windows, macOS, Android, iOS
 
-🎰 1WIN - https://lknt.pro/11fa34
+🔐 **Безопасно и анонимно** — ваши данные надёжно зашифрованы
 
-Если не открывается ссылка, то отключи VPN
+🚀 **Высокая скорость** — до 100 Мбит/с
 
-🎁 ПОДАРКИ ЗА РЕГИСТРАЦИЮ:
+📍 **Серверы в 15 странах**
 
-+50 фри-спинов просто за минимальный деп (Ввести промо DENKRYTOI при регистрации).
-+500% на первые пополнения
-
-❗️ Промокод: DENKRYTOI (ОБЯЗАТЕЛЬНО УКАЗЫВАТЬ ПРИ РЕГИСТРАЦИИ. БЕЗ ПРОМО БОНУС НЕ ДАДУТ!
-
-Дополнительно для игрока:
-
-+ Индивидуальные бонусы
-⚡️ Мгновенные выплаты без верификации
-
-Присоединяйся к нам в канал https://t.me/denkrytoi777
-Наш чат для общения https://t.me/+nkbUdyskoRRiNjAy
+👉 Выбери нужный раздел в меню ниже:
 """
 
-# ССЫЛКА НА ФОТО
-PHOTO_URL = "https://cdn.phototourl.com/free/2026-08-31-458982aa-ab5a-447f-905b-695a880b118c.jpg"
+INFO_TEXT = """
+🔐 **О VPN-сервисе**
 
-def get_keyboard():
+✅ **Полная анонимность** — логи не хранятся
+✅ **Безлимитный трафик** — без ограничений
+✅ **Защита от утечек DNS** — ваши данные в безопасности
+✅ **Круглосуточная поддержка** — всегда готовы помочь
+
+🌍 **Доступные страны:**
+🇺🇸 США, 🇩🇪 Германия, 🇳🇱 Нидерланды, 🇬🇧 Великобритания, 🇫🇷 Франция, 🇯🇵 Япония, 🇸🇬 Сингапур и другие
+"""
+
+HOW_TO_TEXT = """
+📱 **Как подключить VPN за 3 шага:**
+
+1️⃣ **Перейди по ссылке ниже** и нажми "Запустить VPN"
+
+2️⃣ **Активируй пробный период** (3 дня бесплатно)
+
+3️⃣ **Вставь индивидуальный ключ** в приложение HAPP
+
+🔑 **Ключ активации:** приходит после нажатия "Запустить VPN"
+
+⚡️ **Готово!** Ты в безопасности, интернет защищён!
+"""
+
+FAQ_TEXT = """
+❓ **Часто задаваемые вопросы:**
+
+🔹 **Безопасно ли использовать VPN?**  
+Да! Весь трафик шифруется, ваши данные защищены.
+
+🔹 **Снижается ли скорость?**  
+Незначительно. Наши серверы оптимизированы для высокой скорости.
+
+🔹 **Можно ли использовать на нескольких устройствах?**  
+Да, один аккаунт работает на всех устройствах.
+
+🔹 **Что такое HAPP?**  
+Это приложение для подключения VPN на твоём устройстве.
+
+🔹 **Что делать, если ключ не работает?**  
+Напиши в поддержку @enotnetwork — помогут за 2 минуты.
+"""
+
+def get_main_menu():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🎰 ПЕРЕЙТИ В 1WIN", url="https://lknt.pro/11fa34")],
-        [InlineKeyboardButton(text="📢 НАШ КАНАЛ", url="https://t.me/denkrytoi777")],
-        [InlineKeyboardButton(text="💬 НАШ ЧАТ", url="https://t.me/+nkbUdyskoRRiNjAy")]
+        [InlineKeyboardButton(text="🚀 ЗАПУСТИТЬ VPN", url="https://t.me/Enot_vpn_net_bot?start=6404068423")],
+        [InlineKeyboardButton(text="📖 ИНСТРУКЦИЯ", callback_data="howto")],
+        [InlineKeyboardButton(text="ℹ️ О СЕРВИСЕ", callback_data="info")],
+        [InlineKeyboardButton(text="❓ FAQ", callback_data="faq")],
+        [InlineKeyboardButton(text="📍 ПРОВЕРИТЬ IP", callback_data="ip")]
     ])
     return keyboard
 
+def back_button():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🔙 НАЗАД", callback_data="main_menu")]
+    ])
+    return keyboard
+
+# ===== КОМАНДЫ =====
 @dp.message(Command("start"))
 async def start_command(message: types.Message):
     user = message.from_user
     save_user(user.id, user.username, user.first_name)
+    await message.answer(START_TEXT, reply_markup=get_main_menu(), parse_mode="Markdown")
 
-    await message.answer_photo(
-        photo=PHOTO_URL,
-        caption=START_TEXT,
-        reply_markup=get_keyboard()
-    )
+@dp.callback_query()
+async def callback_handler(callback_query: types.CallbackQuery):
+    user = callback_query.from_user
+    save_user(user.id, user.username, user.first_name)
+    
+    if callback_query.data == "main_menu":
+        await callback_query.message.edit_text(START_TEXT, reply_markup=get_main_menu(), parse_mode="Markdown")
+    
+    elif callback_query.data == "info":
+        await callback_query.message.edit_text(INFO_TEXT, reply_markup=back_button(), parse_mode="Markdown")
+    
+    elif callback_query.data == "howto":
+        await callback_query.message.edit_text(HOW_TO_TEXT, reply_markup=back_button(), parse_mode="Markdown")
+    
+    elif callback_query.data == "faq":
+        await callback_query.message.edit_text(FAQ_TEXT, reply_markup=back_button(), parse_mode="Markdown")
+    
+    elif callback_query.data == "ip":
+        try:
+            response = requests.get('https://api.ipify.org?format=json', timeout=5)
+            ip = response.json()['ip']
+            await callback_query.message.edit_text(
+                f"🌐 **Твой IP-адрес:**\n\n`{ip}`\n\n"
+                "🔒 **VPN не активен!** Нажми кнопку ниже, чтобы защитить себя.",
+                reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                    [InlineKeyboardButton(text="🚀 ЗАПУСТИТЬ VPN", url="https://t.me/Enot_vpn_net_bot?start=6404068423")],
+                    [InlineKeyboardButton(text="🔙 НАЗАД", callback_data="main_menu")]
+                ]),
+                parse_mode="Markdown"
+            )
+        except:
+            await callback_query.message.edit_text(
+                "❌ Не удалось определить IP. Попробуй позже.",
+                reply_markup=back_button()
+            )
+    
+    await callback_query.answer()
 
 @dp.message(Command("broadcast"))
 async def broadcast_command(message: types.Message):
-    ADMIN_ID = 6404068423  # ТВОЙ ID
+    ADMIN_ID = 6404068423
     
     if message.from_user.id != ADMIN_ID:
         await message.answer("⛔ Нет прав!")
